@@ -1,5 +1,5 @@
 import "./App.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, createHashRouter, RouterProvider } from "react-router-dom";
 import Layout from "./Components/Layout/Layout.jsx";
 import Home from "./Components/Home/Home.jsx";
 import Cart from "./Components/Cart/Cart.jsx";
@@ -25,7 +25,7 @@ import ForgotPassword from "./Components/ForgotPassword/ForgotPassword.jsx";
 import ResetPassword from "./Components/ResetPassword/ResetPassword.jsx";
 import Overlay from "./Components/Overlay/Overlay.jsx";
 
-let routers = createBrowserRouter([
+let routers = createHashRouter([
   {
     path: "",
     element: <Layout />,

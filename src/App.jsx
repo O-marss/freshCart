@@ -46,13 +46,13 @@ let routers = createHashRouter([
       {
         path: "/specificbrand/:id",
         element: (
-            <SpecificBrand/>
+          <SpecificBrand />
         ),
       },
       {
         path: "/specificCategory/:id",
         element: (
-            <SpecificCategory />
+          <SpecificCategory />
         ),
       },
       {
@@ -129,23 +129,25 @@ export const queryClient = new QueryClient()
 function App() {
   return (
     <>
-      <QueryClientProvider client={queryClient}>
-        <UserContextProvider>
-              <RouterProvider router={routers}></RouterProvider>
-              <ReactQueryDevtools />
-              <Toaster
-                position="bottom-right"
-                toastOptions={{
-                  removeDelay: 2000,
-                  style: {
-                    color: "#222",
-                    fontSize: "14px",
-                    fontWeight: "bold",
-                  },
-                }}
-              />
-        </UserContextProvider>
-      </QueryClientProvider>
+      <div className="App">
+        <QueryClientProvider client={queryClient}>
+          <UserContextProvider>
+            <RouterProvider router={routers}></RouterProvider>
+            <ReactQueryDevtools />
+            <Toaster
+              position="bottom-right"
+              toastOptions={{
+                removeDelay: 2000,
+                style: {
+                  color: "#222",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                },
+              }}
+            />
+          </UserContextProvider>
+        </QueryClientProvider>
+      </div>
     </>
   );
 }

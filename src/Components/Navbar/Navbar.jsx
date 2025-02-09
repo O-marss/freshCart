@@ -32,20 +32,28 @@ export default function Navbar({ hideOverlay, showOverlay }) {
   const navigate = useNavigate();
   const [navIsOpen, setNavIsOpen] = useState(false);
   const [categoryIsOpen, setCategoryIsOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const menuRef = useRef(null);
+  const userMenuRef = useRef(null)
 
   const handleBlur = (e) => {
     if (menuRef.current && !menuRef.current.contains(e.relatedTarget)) {
       setCategoryIsOpen(false);
-      setMobileMenuOpen(false)
       hideOverlay()
     }
   };
 
-  const handleCategoryClick = () => {
+  const handleUserMenuBlur = (e) => {
+    if (userMenuRef.current && !userMenuRef.current.contains(e.relatedTarget)) {
+      setUserMenuOpen(false);
+      hideOverlay()
+    }
+  };
+
+
+  const handleCategoryMenu = () => {
     if (categoryIsOpen === true) {
       setCategoryIsOpen(false);
       hideOverlay()
@@ -54,12 +62,12 @@ export default function Navbar({ hideOverlay, showOverlay }) {
       showOverlay()
     }
   };
-  const handleMobileCategoryMenu = () => {
-    if (mobileMenuOpen === true) {
-      setMobileMenuOpen(false);
+  const handleUserMenu = () => {
+    if (userMenuOpen === true) {
+      setUserMenuOpen(false);
       hideOverlay()
     } else {
-      setMobileMenuOpen(true);
+      setUserMenuOpen(true);
       showOverlay()
     }
   };
@@ -135,7 +143,7 @@ export default function Navbar({ hideOverlay, showOverlay }) {
           <div className={`${styles.nav_btns} relative me-2 hidden md:block`} ref={menuRef} tabIndex={-1} onBlur={handleBlur}>
             <button
               onClick={() => {
-                handleCategoryClick();
+                handleCategoryMenu();
               }}
               className="py-2 px-3 relative z-50 text-sm font-semibold text-[#222]"
             >
@@ -155,7 +163,7 @@ export default function Navbar({ hideOverlay, showOverlay }) {
                   key={category._id}
                   to={`/specificCategory/${category._id}`}
                   className={` text-sm overflow-y-hidden ${styles.categories}`}
-                  onClick={() => setCategoryIsOpen(false)}
+                  onClick={() => handleCategoryMenu()}
                 >
                   <span className="block px-3 py-3 hover:bg-gray-200">{category.name}</span>
                 </Link>
@@ -182,7 +190,7 @@ export default function Navbar({ hideOverlay, showOverlay }) {
           <div
             className={`ms-auto md:gap-2.5 ${isFocused && !userToken ? "hidden" : "flex"
               } md:flex `}
-              ref={menuRef} tabIndex={-1} onBlur={handleBlur}
+
           >
             <div
               className={`${userToken && "hidden"
@@ -243,13 +251,12 @@ export default function Navbar({ hideOverlay, showOverlay }) {
             <div
               className={`${userToken ? "flex" : "hidden"
                 } cart_icon items-center justify-center relative`}
+              ref={userMenuRef} tabIndex={-1} onBlur={handleUserMenuBlur}
+
             >
               <button
                 onClick={() => {
-                  handleMobileCategoryMenu();
-                }}
-                onBlur={() => {
-                  setMobileMenuOpen(false);
+                  handleUserMenu();
                 }}
                 className="hover:bg-[#ccebff] hover:rounded-full p-1 flex gap-2 items-center justify-center "
               >
@@ -257,14 +264,16 @@ export default function Navbar({ hideOverlay, showOverlay }) {
                 <IoMdArrowDropdown className="hidden md:block" />
               </button>
               <div
-                className={`${mobileMenuOpen
+                className={`${userMenuOpen
                   ? `${styles.list_menu}`
                   : `!h-0 !scale-0 ${styles.list_menu}`
                   } md:!right-0  `}
+
               >
                 <Link
                   to={""}
                   className="user_name flex gap-4 items-center bg-[#ccebff] p-5 rounded-t-md border-b border-[#0e0e0e2e] "
+                  onClick={handleUserMenu}
                 >
                   <FaUserCircle className="text-xl" />
                   <div className="flex flex-col gap-1">
@@ -275,6 +284,8 @@ export default function Navbar({ hideOverlay, showOverlay }) {
                 <Link
                   to={""}
                   className="help_center flex gap-4 items-center px-5 py-3 hover:bg-[#eee]"
+                  onClick={handleUserMenu}
+
                 >
                   <IoIosHelpCircleOutline className="text-xl" />
                   <span className="text-sm">Help Center</span>
@@ -282,6 +293,8 @@ export default function Navbar({ hideOverlay, showOverlay }) {
                 <Link
                   to={""}
                   className="account_setting flex gap-4 items-center px-5 py-3 hover:bg-[#eee]"
+                  onClick={handleUserMenu}
+
                 >
                   <IoSettingsOutline className="text-xl" />
                   <span className="text-sm">Account Settings</span>

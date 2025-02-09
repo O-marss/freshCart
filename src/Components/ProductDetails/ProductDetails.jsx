@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import Rating from "react-rating";
 import { IoIosArrowDown, IoIosArrowUp, IoMdHeart } from "react-icons/io";
 import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination, Thumbs, FreeMode, Mousewheel } from "swiper/modules";
@@ -18,7 +19,7 @@ export default function ProductDetails() {
   const [quantity, setQuantity] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
-  let { data, isLoading } = useProducts(`https://ecommerce.routemisr.com/api/v1/products/${id}`, 'productDetails')
+  let { data, isLoading } = useProducts(`https://ecommerce.routemisr.com/api/v1/products/${id}`, `productDetails${id}`)
   const { data: cart } = useCart('get')
   const { mutate: addCart } = useCart('post');
   const { mutate: updateCart, isPending } = useCart('put');
@@ -67,7 +68,7 @@ export default function ProductDetails() {
               watchSlidesProgress={true}
               mousewheel={true}
               modules={[FreeMode, Navigation, Thumbs, Mousewheel]}
-              className="mySwiper swiper-pics w-full lg:w-1/5 lg:max-h-[500px] cursor-pointer"
+              className=" swiper-pics w-full lg:w-1/5 lg:max-h-[500px] cursor-pointer"
               breakpoints={{
                 0: {
                   direction: "horizontal",
@@ -88,7 +89,7 @@ export default function ProductDetails() {
               }}
             >
 
-              {data.images.map((image, index) => (
+              {data?.images.map((image, index) => (
                 <SwiperSlide key={index}>
                   <img src={image} alt={data.title} />
                 </SwiperSlide>
@@ -99,12 +100,12 @@ export default function ProductDetails() {
               modules={[Navigation, Pagination, Thumbs]}
               navigation={true}
               grabCursor={true}
-              thumbs={{ swiper: thumbsSwiper }}
+              thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
               slidesPerView={1}
               className="detailsSwiper select-none w-full lg:w-full"
             >
-              {data.images.map((image, index) => (
-                <SwiperSlide key={index}>
+              {data?.images.map((image, index) => (
+                <SwiperSlide key={data.id + index}>
                   <div className="flex ">
                     <img src={image} alt={data.title} />
                   </div>

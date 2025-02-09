@@ -209,7 +209,7 @@ export default function Navbar({ hideOverlay, showOverlay }) {
                 className="hover:bg-[#ccebff] hover:rounded-full p-1 relative"
               >
                 <MdOutlineFavoriteBorder className="text-2xl" />
-                {wishListData?.count > 0 ? (
+                {wishListData?.count > 0 && userToken ? (
                   <span className="absolute -top-1 right-0 bg-main px-1 rounded-full text-white text-[12px]">
                     {wishListData?.count}
                   </span>
@@ -226,7 +226,7 @@ export default function Navbar({ hideOverlay, showOverlay }) {
                 className="hover:bg-[#ccebff] hover:rounded-full p-1 relative"
               >
                 <IoCartOutline className="text-2xl " />
-                {data?.numOfCartItems > 0 ? (
+                {data?.numOfCartItems > 0 && userToken ? (
                   <span className="absolute -top-1 right-0 bg-main px-1 rounded-full text-white text-[12px]">
                     {data?.numOfCartItems}
                   </span>

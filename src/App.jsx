@@ -13,7 +13,6 @@ import Signin from "./Components/Signin/Signin.jsx";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute.jsx";
 import Favorites from "./Components/Favorites/Favorites.jsx";
 import ProductDetails from "./Components/ProductDetails/ProductDetails.jsx";
-import CartContextProvider from "./context/CartContext.jsx";
 import { Toaster } from "react-hot-toast";
 import Checkout from "./Components/Checkout/Checkout.jsx";
 import AllOrders from "./Components/AllOrders/AllOrders.jsx";
@@ -23,7 +22,6 @@ import CashPayment from "./Components/CashPayment/cashPayment.jsx";
 import SpecificBrand from "./Components/SpecificBrand/SpecificBrand.jsx";
 import ForgotPassword from "./Components/ForgotPassword/ForgotPassword.jsx";
 import ResetPassword from "./Components/ResetPassword/ResetPassword.jsx";
-import Overlay from "./Components/Overlay/Overlay.jsx";
 
 let routers = createHashRouter([
   {

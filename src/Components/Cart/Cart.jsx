@@ -1,6 +1,5 @@
-import { useContext, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import styles from "./Cart.module.css";
-import { CartContext } from "../../context/CartContext";
 import { FaArrowRight, FaHandshake } from "react-icons/fa";
 import { Link, useOutletContext } from "react-router-dom";
 import { SiVisa } from "react-icons/si";

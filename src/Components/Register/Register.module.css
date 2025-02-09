@@ -1,0 +1,14 @@
+.overlay{
+    position: relative;
+}
+
+.overlay::after{
+    position: fixed;
+    content: '';
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: hidden;
+    background: #0e0e0e91;
+}

@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Albert Sans", serif;
+  color: #222;
+  letter-spacing: .16px;
+
+}
+
+:root {
+  --main-color: #0aad0a;
+  --light-color: #f0f3f2;
+  --shadow: rgba(145, 158, 171, 0.2) 0px 2px 4px -1px,
+    rgba(145, 158, 171, 0.14) 0px 4px 5px 0px,
+    rgba(145, 158, 171, 0.12) 0px 1px 10px 0px;
+  --font-family: "Encode Sans Expanded", sans-serif;
+  --rating-color: #ffc908;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.mySwiper .swiper-button-prev {
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  border-radius: 50%;
+  width: 50px !important;
+  height: 50px !important;
+}
+
+.mySwiper .swiper-button-next {
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  border-radius: 50%;
+  width: 50px !important;
+  height: 50px !important;
+}
+
+.mySwiper .swiper-button-next::after,
+.mySwiper .swiper-button-prev::after {
+  font-size: 20px !important;
+  color: #121212;
+}
+
+.detailsSwiper .swiper-button-prev {
+  border-radius: 50%;
+  left: 0 !important;
+  transform: translateX(-100%);
+  transition: transform 0.2s;
+}
+
+.detailsSwiper .swiper-button-next {
+  border-radius: 50%;
+  right: 0 !important;
+  transform: translateX(100%);
+  transition: transform 0.2s;
+}
+
+.detailsSwiper .swiper-button-next::after,
+.detailsSwiper .swiper-button-prev::after {
+  font-size: 25px !important;
+  color: #121212;
+  font-weight: bold;
+}
+.detailsSwiper .swiper-pagination-bullet {
+  width: 40px !important;
+  height: 2px !important;
+  border-radius: 0 !important;
+}
+
+.detailsSwiper:hover .swiper-button-next{
+  transform: translateX(0);
+}
+
+.detailsSwiper:hover .swiper-button-prev{
+  transform: translateX(0);
+}
+
+.detailsSwiper .swiper-pagination-fraction, .swiper-pagination-custom, .swiper-horizontal > .swiper-pagination-bullets, .swiper-pagination-bullets.swiper-pagination-horizontal{
+  bottom: -4px !important;
+}
+
+.swiper-pics .swiper-wrapper{
+  justify-content: center !important;
+}
+
+@media (min-width: 993px) {
+  .mySwiper .swiper-button-prev {
+    left: auto !important;
+    right: 70px !important;
+    top: -20px !important;
+  }
+
+  .mySwiper .swiper-button-next {
+    top: -20px!important;
+    right: 10px !important;
+  }
+
+}
+
+.pagination {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination li {
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.pagination li a {
+  padding: 8px 12px;
+  border: 1px solid #0aad0a;
+  border-radius: 5px;
+  color: #0aad0a;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.pagination .active a {
+  background-color: #0aad0a;
+  color: white;
+  border-color: #0aad0a;
+}
+
+.pagination li a:hover {
+  background-color: #e9ece9;
+}
+
+.pagination .disabled a {
+  color: #ccc;
+  cursor: not-allowed;
+  border-color: #ccc;
+}

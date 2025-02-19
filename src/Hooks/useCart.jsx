@@ -34,12 +34,30 @@ export default function useCart(method) {
 
     const updateResponse = useMutation({
         mutationFn: updateCartProductCount,
-        onSuccess: () => {
-            queryClient.invalidateQueries(['cart']);
+        onMutate: async () => {
+            await queryClient.cancelQueries(['cart'])
+            const previousCart = queryClient.getQueryData(['cart'])
+            queryClient.setQueryData(['cart'], (oldCart) => {
+                if (!oldCart?.data?.products) return oldCart;
+                return {
+                    ...oldCart,
+                    data: {
+                        ...oldCart.data,
+                        products: oldCart.data.products.map((item) =>
+                            item.product._id === productId ? { ...item, count } : item
+                        ),
+                    },
+                };
+            })
+
+            return { previousCart }
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries(['cart'])
             toast.success('Product count updated successfully');
         },
-        onError: (error) => {
-            console.error(error);
+        onError: (err, newTodo, context) => {
+            queryClient.setQueryData(['cart'], context.previousCart)
             toast.error('Failed to update product count');
         },
     })

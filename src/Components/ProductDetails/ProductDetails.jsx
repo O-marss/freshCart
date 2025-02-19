@@ -119,10 +119,10 @@ export default function ProductDetails() {
                 </span>
 
                 {wishlist?.data.length > 0 ? wishlist?.data.map((item) => (item.id == product?.id) ?
-                  <button onClick={() => handleDeleteFromWishList(product?.id)}>
+                  <button key={item.id} onClick={() => handleDeleteFromWishList(product?.id)}>
                     <IoMdHeart className={`${styles.delete_favorite_icon} text-2xl md:text-xl`} />
                   </button> : (
-                    <button onClick={() => handleAddtoWishList(product?.id)}>
+                    <button key={item.id} onClick={() => handleAddtoWishList(product?.id)}>
                       <IoMdHeart className={`${styles.add_favorite_icon} text-2xl md:text-xl`} />
                     </button>
                   )

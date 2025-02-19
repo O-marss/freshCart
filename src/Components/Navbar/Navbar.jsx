@@ -106,11 +106,11 @@ export default function Navbar({ hideOverlay, showOverlay }) {
   return (
     <>
       <header
-        className={`fixed top-0 start-0 end-0 flex flex-col gap-3 bg-white px-1 shadow-md md:shadow-none md:px-8 border-b border-b-gray-400 z-[999999999999] ${isScrolled ? "md:py-2" : "py-3 md:py-4"
+        className={`fixed top-0 start-0 end-0 flex flex-col gap-3 bg-white  shadow-md md:shadow-none px-1 lg:px-8 border-b border-b-gray-400 z-[99999] ${isScrolled ? "py-2" : "py-3 md:py-4"
           }`}
       >
         <nav
-          className={`container flex items-center justify-start bg-white px-4 lg:px-14`}
+          className={`lg:container flex items-center justify-start bg-white px-4 lg:px-14`}
           aria-label="Global"
         >
           <div onClick={() => handleNavMenu()} className="flex md:hidden">
@@ -136,7 +136,7 @@ export default function Navbar({ hideOverlay, showOverlay }) {
               </svg>
             </button>
           </div>
-          <Link to={""} className="md:pe-4">
+          <Link to={""} className="lg:pe-4">
             <span className="sr-only">Your Company</span>
             <img className="w-[100px] md:w-[130px]" src={logo} alt="" />
           </Link>
@@ -172,13 +172,14 @@ export default function Navbar({ hideOverlay, showOverlay }) {
             </div>
           </div>
 
-          <div className={`flex font-semibold text-sm pe-2`}>
-            <Link to={`products`} className={`py-2 px-3 ${styles.nav_links}`}>Products</Link>
-            <Link to={`brands`} className={`py-2 px-3 ${styles.nav_links}`}>Brands</Link>
+          <div className={`flex font-semibold text-[12px] md:text-sm`}>
+            <Link to={`products`} className={`py-2 px-2 lg:px-3 ${styles.nav_links}`}>Products</Link>
+            <Link to={`brands`} className={`py-2 px-2 lg:px-3 ${styles.nav_links}`}>Brands</Link>
           </div>
 
           {/* ########## Search ############# */}
           <SearchBar hideOverlay={hideOverlay} showOverlay={showOverlay} />
+
           {!userToken && (
             <>
               <div
@@ -242,17 +243,6 @@ export default function Navbar({ hideOverlay, showOverlay }) {
                     0
                   </span>
                 )}
-              </NavLink>
-            </div>
-            <div
-              className={`${userToken ? "flex" : "hidden"
-                } cart_icon items-center justify-center`}
-            >
-              <NavLink
-                to={""}
-                className="hover:bg-[#ccebff] hover:rounded-full p-1"
-              >
-                <IoMdNotificationsOutline className="text-2xl" />
               </NavLink>
             </div>
             <div

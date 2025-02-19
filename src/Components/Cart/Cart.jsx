@@ -1,35 +1,39 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./Cart.module.css";
 import { FaArrowRight, FaHandshake } from "react-icons/fa";
 import { Link, useOutletContext } from "react-router-dom";
 import { SiVisa } from "react-icons/si";
 import { RiMastercardFill } from "react-icons/ri";
 import { IoMdCash } from "react-icons/io";
-import { PiSpinnerGapBold } from "react-icons/pi";
 import Loading from "../Loading/Loading";
 import Overlay from "../Overlay/Overlay";
 import useCart from "../../Hooks/useCart";
 
 export default function Cart() {
 
-  const { data, isFetched, isFetching, isLoading } = useCart('get');
-
+  const { data, isFetching, isLoading } = useCart('get');
+  console.log(data)
   const { mutate: updateCart, isPending } = useCart('put');
-
   const { mutate: deleteCartItem, isPending: deletePending } = useCart('delete');
+  let [onlinePayment, setOnlinePayment] = useState(true)
+  let [cashPayment, setCashPayment] = useState(false)
 
-  const handleUpdateCart = (id, newCount) => {
-    updateCart({ productId: id, count: newCount });
+  const { hideOverlay, showOverlay } = useOutletContext()
+
+  const [productCounts, setProductCounts] = useState({});
+
+
+  const handleUpdateCart = (id, updateCount) => {
+    updateCart({ productId: id, count: updateCount });
+    setProductCounts((prevCounts) => ({
+      ...prevCounts,
+      [id]: updateCount,
+    }));
   };
 
   const handleDeleteCart = (id) => {
     deleteCartItem({ productId: id });
   };
-
-  let [onlinePayment, setOnlinePayment] = useState(true)
-  let [cashPayment, setCashPayment] = useState(false)
-
-  const { hideOverlay, showOverlay } = useOutletContext()
 
   const handleOnlinePayment = (event) => {
     setCashPayment(!event.target.checked)
@@ -142,13 +146,12 @@ export default function Cart() {
                                 </svg>
                               </button>
                               <div className="ms-3">
-
-                                {(isPending || isFetching) ? <PiSpinnerGapBold className="text-xl text-center fa-spin" /> : isFetched ? <span
+                                <span
                                   id="first_product"
                                   className="w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1"
                                 >
-                                  {product.count}
-                                </span> : ''}
+                                  {productCounts[product.product.id] || product.count}
+                                </span>
 
                               </div>
                               <button

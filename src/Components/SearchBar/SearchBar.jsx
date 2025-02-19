@@ -25,7 +25,7 @@ export default function SearchBar({ hideOverlay, showOverlay }) {
   return <>
     <div
       className={`${styles.nav_search
-        } bg-white flex flex-1 items-center rounded-full border-2 border-[#222] ${isFocused && "absolute start-[5px] end-[30px] bg-white"
+        } bg-white flex flex-1 items-center rounded-full border-2 border-[#222] lg:mx-4 ${isFocused && "absolute start-[5px] end-[30px] bg-white"
         } ${userToken && "hidden"} ${userToken && "md:flex"
         } md:relative md:inset-0 relative`}
       ref={menuRef} tabIndex={-1} onBlur={handleBlur}

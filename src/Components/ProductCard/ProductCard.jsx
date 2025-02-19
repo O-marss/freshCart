@@ -1,6 +1,5 @@
 import React from 'react'
 import styles from './ProductCard.module.css'
-import { MdHeartBroken } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import { IoCartOutline } from 'react-icons/io5'
 import { IoMdHeart } from 'react-icons/io'
@@ -9,6 +8,7 @@ import useCart from '../../Hooks/useCart'
 
 export default function ProductCard({ product, favoriteList }) {
 
+  const { data } = useWishList('get')
   const { mutate: addCart } = useCart('post');
   const { mutate: deleteFromWishList } = useWishList('delete');
   const { mutate: addToWishList } = useWishList('post');
@@ -27,17 +27,21 @@ export default function ProductCard({ product, favoriteList }) {
 
   return (
     <>
-      <div key={product?.id} className="w-1/2 md:w-4/12 lg:w-3/12 p-2 md:p-4 lg:p-2 !pt-4 ">
+      <div className="w-1/2 md:w-4/12 lg:w-3/12 p-2 md:p-4 lg:p-2 !pt-4 ">
         <div
           className={`${styles.product} pb-2 border border-zinc-200 rounded-2xl overflow-hidden h-[355px] md:h-[420px] lg:h-[460px]`}
         >
-          {favoriteList ? (<button onClick={() => handleDeleteFromWishList(product?.id)}  ><MdHeartBroken className={`${styles.card_favorite_icon} text-2xl md:text-xl`} /></button>)
-            : (
-              <button onClick={() => handleAddtoWishList(product?.id)}>
-                <IoMdHeart className={`${styles.card_favorite_icon} text-2xl md:text-xl`} />
-              </button>
-            )
-          }
+          {data.data.length > 0 ? data?.data.map((item) => item.id == product?.id ? <button onClick={() => handleDeleteFromWishList(product?.id)}  ><IoMdHeart className={`${styles.delete_favorite_icon} text-2xl md:text-xl`} /></button> : (
+            <button onClick={() => handleAddtoWishList(product?.id)}>
+              <IoMdHeart className={`${styles.add_favorite_icon} text-2xl md:text-xl`} />
+            </button>
+          )
+
+          ) : (
+            <button onClick={() => handleAddtoWishList(product?.id)}>
+              <IoMdHeart className={`${styles.add_favorite_icon} text-2xl md:text-xl`} />
+            </button>
+          )}
           <Link to={`/productdetails/${product?.id}`}>
             <div className="relative ">
               <img
@@ -112,7 +116,7 @@ export default function ProductCard({ product, favoriteList }) {
             </div>
           </Link>
           <button
-            className={`${styles.card_add} flex gap-2 justify-center items-center text-sm text-white font-semibold bg-[#222] px-5 py-2 mx-auto hover:bg-opacity-75 z-[9999999999999999999]`}
+            className={`${styles.card_add} flex gap-2 justify-center items-center text-sm text-white font-semibold bg-[#222] px-5 py-2 mx-auto hover:bg-opacity-75 z-[999]`}
             onClick={() => handleAddCart(product.id)}
           >
             <span>Quick Add</span>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import styles from './ProductDetails.module.css'
 import Rating from "react-rating";
 import { IoIosArrowDown, IoIosArrowUp, IoMdHeart } from "react-icons/io";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -12,14 +13,12 @@ import useProducts from "../../Hooks/useProducts";
 import useCart from "../../Hooks/useCart";
 import RelatedProducts from "../RelatedProducts/RelatedProducts";
 import useWishList from "../../Hooks/useWishList";
-import { MdHeartBroken } from "react-icons/md";
 
 export default function ProductDetails() {
   let { id } = useParams();
   const [quantity, setQuantity] = useState(0);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
-  let { data, isLoading } = useProducts(`https://ecommerce.routemisr.com/api/v1/products/${id}`, `productDetails${id}`)
+  const { data: product, isLoading } = useProducts(`https://ecommerce.routemisr.com/api/v1/products/${id}`, `productDetails${id}`)
   const { data: cart } = useCart('get')
   const { mutate: addCart } = useCart('post');
   const { mutate: updateCart, isPending } = useCart('put');
@@ -49,8 +48,7 @@ export default function ProductDetails() {
   }
 
   useEffect(() => {
-    cart?.data?.products.map((product) => product.product?.id == data?.id ? setQuantity(product.count) : setQuantity(0))
-    wishlist?.data?.map((product) => product?.id == data?.id ? setIsFavorite(true) : setIsFavorite(false))
+    cart?.data?.products.map((product) => product.product?.id == product?.id ? setQuantity(product.count) : setQuantity(0))
   }, [cart, wishlist])
 
 
@@ -89,9 +87,9 @@ export default function ProductDetails() {
               }}
             >
 
-              {data?.images.map((image, index) => (
+              {product?.images.map((image, index) => (
                 <SwiperSlide key={index}>
-                  <img src={image} alt={data.title} />
+                  <img src={image} alt={product.title} />
                 </SwiperSlide>
               ))}
 
@@ -104,10 +102,10 @@ export default function ProductDetails() {
               slidesPerView={1}
               className="detailsSwiper select-none w-full lg:w-full"
             >
-              {data?.images.map((image, index) => (
-                <SwiperSlide key={data.id + index}>
-                  <div className="flex ">
-                    <img src={image} alt={data.title} />
+              {product?.images.map((image, index) => (
+                <SwiperSlide key={product.id + index}>
+                  <div className="flex">
+                    <img src={image} alt={product.title} />
                   </div>
                 </SwiperSlide>
               ))}
@@ -117,57 +115,63 @@ export default function ProductDetails() {
             <div className="lg:ps-12 flex flex-col justify-center items-start gap-6">
               <div className="flex items-center justify-between w-full">
                 <span className="text-sm font-medium text-gray-400">
-                  Pr.ID: {data.id}
+                  Pr.ID: {product.id}
                 </span>
 
-                {isFavorite ? (<button onClick={() => handleDeleteFromWishList(data?.id)}  ><MdHeartBroken className={`text-2xl md:text-4xl text-[#990000]`} /></button>)
-                  : (
-                    <button onClick={() => handleAddtoWishList(data?.id)}>
-                      <IoMdHeart className={`text-2xl md:text-4xl text-[#990000] transition-all scale-1 hover:scale-[1.2]`} />
+                {wishlist?.data.length > 0 ? wishlist?.data.map((item) => (item.id == product?.id) ?
+                  <button onClick={() => handleDeleteFromWishList(product?.id)}>
+                    <IoMdHeart className={`${styles.delete_favorite_icon} text-2xl md:text-xl`} />
+                  </button> : (
+                    <button onClick={() => handleAddtoWishList(product?.id)}>
+                      <IoMdHeart className={`${styles.add_favorite_icon} text-2xl md:text-xl`} />
                     </button>
                   )
-                }
+                ) : (
+                  <button onClick={() => handleAddtoWishList(product?.id)}>
+                    <IoMdHeart className={`${styles.add_favorite_icon} text-2xl md:text-xl`} />
+                  </button>
+                )}
               </div>
               <h3 className="text-2xl font-semibold text-[#222]">
-                {data.title}
+                {product.title}
               </h3>
 
               <p className="text-sm font-medium text-gray-600 leading-[1.6]">
-                {data.description}
+                {product.description}
               </p>
 
               <div>
                 <Rating
                   readonly
-                  initialRating={data.ratingsAverage}
+                  initialRating={product.ratingsAverage}
                   emptySymbol={
                     <i className=" fa-regular fa-star text-[#ffc908]"></i>
                   }
                   fullSymbol={<i className="fa fa-star text-[#ffc908]"></i>}
                 />
                 <span className="ms-4 me-2 font-medium text-main">
-                  {data.ratingsAverage}
+                  {product.ratingsAverage}
                 </span>
                 <span className="text-sm font-medium text-gray-400">
-                  ({data.ratingsQuantity} reviews)
+                  ({product.ratingsQuantity} reviews)
                 </span>
               </div>
               <div>
-                {data.priceAfterDiscount ? (
+                {product.priceAfterDiscount ? (
                   <>
                     <div className="flex items-center gap-6">
                       <div className="flex flex-col items-start">
                         <span className="line-through text-red-600 text-xl font-medium">
-                          EGP {data.price.toFixed(2)}
+                          EGP {product.price.toFixed(2)}
                         </span>
                         <span className="text-[#0f743b] text-2xl font-semibold">
-                          EGP {data.priceAfterDiscount.toFixed(2)}
+                          EGP {product.priceAfterDiscount.toFixed(2)}
                         </span>
                       </div>
                       <span className="bg-[#a0e193] py-2 px-3 rounded-full font-medium">
                         {(
-                          ((data.price - data.priceAfterDiscount) /
-                            data.price) *
+                          ((product.price - product.priceAfterDiscount) /
+                            product.price) *
                           100
                         ).toFixed(0)}
                         % Off
@@ -176,7 +180,7 @@ export default function ProductDetails() {
                   </>
                 ) : (
                   <span className="text-main text-xl font-semibold">
-                    EGP {data.price.toFixed(2)}
+                    EGP {product.price.toFixed(2)}
                   </span>
                 )}
                 <p className="text-sm text-gray-400">
@@ -205,7 +209,7 @@ export default function ProductDetails() {
                       id="increment-button"
                       className="  hover:bg-gray-200 p-2 ms-1 focus:ring-gray-100  focus:ring-none focus:outline-none "
                       onClick={() => {
-                        handleUpdateCart(data.id,
+                        handleUpdateCart(product.id,
                           quantity + 1)
                       }}
                     >
@@ -216,7 +220,7 @@ export default function ProductDetails() {
                       id="decrement-button"
                       className=" hover:bg-gray-200 p-2 ms-1 focus:ring-gray-100  focus:ring-none focus:outline-none "
                       onClick={() => {
-                        handleUpdateCart(data.id,
+                        handleUpdateCart(product.id,
                           quantity - 1)
                       }}
                       disabled={quantity <= 1}
@@ -225,9 +229,9 @@ export default function ProductDetails() {
                     </button>
                   </div>
                 </div>
-                {quantity < 1 ? <button className="bg-main text-white px-5 py-4  lg:px-5 lg:py-3  lg:text-lg font-medium flex-1  lg:ms-6 hover:bg-[#517e51]" onClick={() => { handleAddCart(data.id) }}>
+                {quantity < 1 ? <button className="bg-main text-white px-5 py-4  lg:px-5 lg:py-3  lg:text-lg font-medium flex-1  lg:ms-6 hover:bg-[#517e51]" onClick={() => { handleAddCart(product.id) }}>
                   Add to Cart
-                </button> : <button className="bg-main text-white px-5 py-4  lg:px-5 lg:py-3  lg:text-lg font-medium flex-1  lg:ms-6 hover:bg-[#517e51]" onClick={() => { handleDeleteCart(data.id) }}>
+                </button> : <button className="bg-main text-white px-5 py-4  lg:px-5 lg:py-3  lg:text-lg font-medium flex-1  lg:ms-6 hover:bg-[#517e51]" onClick={() => { handleDeleteCart(product.id) }}>
                   Remove from Cart
                 </button>}
 
@@ -236,7 +240,7 @@ export default function ProductDetails() {
           </div>
         </section>
       )}
-      <RelatedProducts categoryName={data?.category.name} />
+      <RelatedProducts categoryName={product?.category.name} />
     </>
   );
 }

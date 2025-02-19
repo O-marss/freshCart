@@ -7,6 +7,8 @@ import Loading from "../Loading/Loading.jsx";
 import logo from "../../assets/images/freshcart-logo.svg";
 import useBrands from "../../Hooks/useBrands.jsx";
 import ProductCard from "../ProductCard/ProductCard.jsx";
+import Sorting from "../Sorting/Sorting.jsx";
+import useSorting from "../../Hooks/useSorting.jsx";
 
 export default function SpecificBrand() {
   const { id } = useParams();
@@ -16,32 +18,37 @@ export default function SpecificBrand() {
     `getSpecificBrand${id}`
   );
 
-
   const { data: products, isLoading } = useProducts(
     `https://ecommerce.routemisr.com/api/v1/products`,
-    `recentProducts${id}`
+    `allProducts`
   );
 
   const [brandProducts, setBrandProducts] = useState([]);
+  const { handleSorting } = useSorting();
+  const [sortValue, setSortValue] = useState('default');
+  const [sortedProducts, setSortedProducts] = useState([]);
 
   useEffect(() => {
     if (products && brand) {
-      setBrandProducts(
-        products?.filter((product) => product.brand.name === brand?.name)
-      );
-    } else {
-      setBrandProducts([]);
+      const filteredProducts = products?.filter((product) => product.brand.name === brand?.name)
+      setBrandProducts(filteredProducts);
     }
   }, [products, brand]);
+
+  useEffect(() => {
+    const sorted = handleSorting([...brandProducts], sortValue);
+    setSortedProducts(sorted);
+  }, [brandProducts, sortValue])
+
 
   function PaginatedItems({ itemsPerPage }) {
     const [itemOffset, setItemOffset] = useState(0);
     const endOffset = itemOffset + itemsPerPage;
-    const currentItems = brandProducts?.slice(itemOffset, endOffset);
-    const pageCount = Math.ceil(brandProducts?.length / itemsPerPage);
+    const currentItems = sortedProducts?.slice(itemOffset, endOffset);
+    const pageCount = Math.ceil(sortedProducts?.length / itemsPerPage);
     const handlePageClick = (event) => {
       const newOffset =
-        (event.selected * itemsPerPage) % brandProducts?.length;
+        (event.selected * itemsPerPage) % sortedProducts?.length;
       setItemOffset(newOffset);
     };
 
@@ -77,11 +84,14 @@ export default function SpecificBrand() {
       ) : (
         <>
           <section className="pt-20 lg:px-14 container">
-            {brandProducts.length ? (
+
+            {sortedProducts?.length ? (
               <>
-                <div className="flex justify-center items-center">
+
+                <div className="flex justify-center items-center pb-8 lg:pb-0">
                   <img src={brand?.image} alt="" />
                 </div>
+                <Sorting sortValue={sortValue} setSortValue={setSortValue} />
                 <PaginatedItems itemsPerPage={8} />
               </>
             ) : (

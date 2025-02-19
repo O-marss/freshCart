@@ -50,7 +50,9 @@ export default function SearchBar({ hideOverlay, showOverlay }) {
 
       <div className={`absolute top-16 -left-24 -right-24 md:-left-20 md:-right-20 lg:left-0 lg:right-0  bg-white z-[9999]  mx-auto flex flex-col gap-5 p-5 transition-all h-0 invisible  rounded-xl ${searchValue && "!max-h-[400px] !h-auto overflow-y-auto !visible"}`}
       >
-        {data?.filter((product) => searchValue.toLowerCase() === '' ? '' : product.title[0].toLowerCase().includes(searchValue)).map((product) =>
+
+        {/* Search Output */}
+        {data?.filter((product) => searchValue.trim().toLowerCase() === '' ? '' : product.title.toLowerCase().startsWith(searchValue.trim().toLowerCase())).map((product) =>
           <Link key={product.id} to={`productdetails/${product.id}`} className='flex gap-3 items-center justify-start hover:bg-black hover:bg-opacity-5 relative z-50'>
             <div className='w-1/4 lg:w-1/12'>
               <img src={product.imageCover} alt={product.title} />

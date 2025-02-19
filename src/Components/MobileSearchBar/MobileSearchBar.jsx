@@ -47,8 +47,9 @@ export default function MobileSearchBar({ hideOverlay, showOverlay }) {
         <FiSearch className=" text-md md:text-2xl text-white" />
       </div>
 
+      {/* Search Output */}
       <div className={`absolute top-14 left-0 right-0 md:-left-20 md:-right-20 lg:left-0 lg:right-0  bg-white z-[9999]  mx-auto flex flex-col gap-5 p-5 transition-all h-0 opacity-0 rounded-xl ${searchValue && "!max-h-[400px] !h-auto overflow-y-auto opacity-100"}`}>
-        {data?.filter((product) => searchValue.toLowerCase() === '' ? '' : product.title[0].toLowerCase().includes(searchValue)).map((product) =>
+        {data?.filter((product) => searchValue.trim().toLowerCase() === '' ? '' : product.title.toLowerCase().startsWith(searchValue.trim().toLowerCase())).map((product) =>
           <Link className='flex gap-3 items-center justify-start hover:bg-black hover:bg-opacity-5'>
             <div className='w-1/4 lg:w-1/12'>
               <img src={product.imageCover} alt="" className='' />

@@ -1,16 +1,15 @@
-import { useEffect, useState } from "react";
 import styles from "./DiscountedProducts.module.css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
-import { MdOutlineFavoriteBorder } from "react-icons/md";
 import { IoCartOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import Loading from "../Loading/Loading";
 import useProducts from "../../Hooks/useProducts";
 import useWishList from "../../Hooks/useWishList";
 import useCart from "../../Hooks/useCart";
+import { IoMdHeart } from "react-icons/io";
 
 export default function DiscountedProducts() {
   const { data, isLoading } = useProducts(
@@ -20,6 +19,8 @@ export default function DiscountedProducts() {
 
   const { mutate: addCart } = useCart('post');
   const { mutate: addToWishList } = useWishList('post');
+  const { mutate: deleteFromWishList } = useWishList('delete');
+  const { data: wishList } = useWishList('get');
 
   const handleAddCart = (id) => {
     addCart({ productId: id });
@@ -29,6 +30,9 @@ export default function DiscountedProducts() {
     addToWishList({ productId: id })
   }
 
+  const handleDeleteFromWishList = (id) => {
+    deleteFromWishList({ productId: id })
+  }
   return (
     <>
       {isLoading ? (
@@ -69,11 +73,19 @@ export default function DiscountedProducts() {
                       <div
                         className={`${styles.product} lg:space-y-0 pb-2 border border-zinc-200 rounded-2xl overflow-hidden`}
                       >
-                        <button onClick={() => handleAddtoWishList(product.id)}>
-                          <MdOutlineFavoriteBorder
-                            className={`${styles.card_favorite_icon} text-2xl md:text-xl`}
-                          />
-                        </button>
+                        {wishList?.data.length > 0 ? wishList?.data.map((item) => (item.id == product?.id) ?
+                          <button onClick={() => handleDeleteFromWishList(product?.id)}>
+                            <IoMdHeart className={`${styles.delete_favorite_icon} text-2xl md:text-xl`} />
+                          </button> : (
+                            <button onClick={() => handleAddtoWishList(product?.id)}>
+                              <IoMdHeart className={`${styles.add_favorite_icon} text-2xl md:text-xl`} />
+                            </button>
+                          )
+                        ) : (
+                          <button onClick={() => handleAddtoWishList(product?.id)}>
+                            <IoMdHeart className={`${styles.add_favorite_icon} text-2xl md:text-xl`} />
+                          </button>
+                        )}
 
                         <Link to={`/productdetails/${product.id}`}>
                           <div className="relative ">

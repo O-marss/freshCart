@@ -1,0 +1,21 @@
+.add_favorite_icon {
+  transition: all 0.3s;
+  color: gray;
+  width: 35px;
+  height: 35px;
+}
+
+.add_favorite_icon:hover {
+  color: rgb(167, 18, 18);
+}
+
+.delete_favorite_icon {
+  transition: all 0.3s;
+  color: rgb(167, 18, 18);
+  width: 35px;
+  height: 35px;
+}
+
+.delete_favorite_icon:hover {
+  color: gray;
+}

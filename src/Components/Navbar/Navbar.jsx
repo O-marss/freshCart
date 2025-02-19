@@ -22,6 +22,7 @@ import MobileSearchBar from "../MobileSearchBar/MobileSearchBar";
 
 export default function Navbar({ hideOverlay, showOverlay }) {
   const { userToken, setUserToken, userName, setUserName } = useContext(UserContext);
+
   const { data: categories } = useCategories(
     `https://ecommerce.routemisr.com/api/v1/categories`,
     "getAllCategories"
@@ -105,7 +106,7 @@ export default function Navbar({ hideOverlay, showOverlay }) {
   return (
     <>
       <header
-        className={`fixed top-0 start-0 end-0 bg-white px-1 shadow-md md:shadow-none md:px-8 border-b border-b-gray-400 z-[999999999999] ${isScrolled ? "md:py-2" : "py-3 md:py-4"
+        className={`fixed top-0 start-0 end-0 flex flex-col gap-3 bg-white px-1 shadow-md md:shadow-none md:px-8 border-b border-b-gray-400 z-[999999999999] ${isScrolled ? "md:py-2" : "py-3 md:py-4"
           }`}
       >
         <nav
@@ -140,7 +141,7 @@ export default function Navbar({ hideOverlay, showOverlay }) {
             <img className="w-[100px] md:w-[130px]" src={logo} alt="" />
           </Link>
 
-          <div className={`${styles.nav_btns} relative me-2 hidden md:block`} ref={menuRef} tabIndex={-1} onBlur={handleBlur}>
+          <div className={`${styles.nav_btns} relative hidden md:block`} ref={menuRef} tabIndex={-1} onBlur={handleBlur}>
             <button
               onClick={() => {
                 handleCategoryMenu();
@@ -170,6 +171,12 @@ export default function Navbar({ hideOverlay, showOverlay }) {
               ))}
             </div>
           </div>
+
+          <div className={`flex font-semibold text-sm pe-2`}>
+            <Link to={`products`} className={`py-2 px-3 ${styles.nav_links}`}>Products</Link>
+            <Link to={`brands`} className={`py-2 px-3 ${styles.nav_links}`}>Brands</Link>
+          </div>
+
           {/* ########## Search ############# */}
           <SearchBar hideOverlay={hideOverlay} showOverlay={showOverlay} />
           {!userToken && (

@@ -8,45 +8,55 @@ import ReactPaginate from "react-paginate";
 import Loading from "../Loading/Loading.jsx";
 import logo from "../../assets/images/freshcart-logo.svg";
 import ProductCard from "../ProductCard/ProductCard.jsx";
+import useSorting from "../../Hooks/useSorting.jsx";
+import Sorting from "../Sorting/Sorting.jsx";
 
 export default function Categories() {
   const { id } = useParams();
 
   const { data: category } = useCategories(
     `https://ecommerce.routemisr.com/api/v1/categories/${id}`,
-    `getAllCategories${id}`
+    `getSpecificCategories${id}`
   );
 
   const { data: products, isLoading } = useProducts(
     `https://ecommerce.routemisr.com/api/v1/products`,
-    `recentProducts${id}`
+    `allProducts`
   );
 
   const { data: subCategories } = useCategories(
     `https://ecommerce.routemisr.com/api/v1/categories/${id}/subcategories`,
-    `getAllSubCategories${id}`
+    `getSpecificSubCategories${id}`
   );
 
   const [categoryProduct, setCategoryProduct] = useState([]);
 
+  const { handleSorting } = useSorting();
+  const [sortValue, setSortValue] = useState('default');
+  const [sortedProducts, setSortedProducts] = useState([]);
+
   useEffect(() => {
-    if (products && category) {
-      setCategoryProduct(
-        products?.filter((product) => product.category?.name === category?.name)
-      );
-    } else {
-      setCategoryProduct([]);
+    if (products?.length && category?.name) {
+      const filteredProducts = products.filter((product) => product.category?.name === category.name);
+      setCategoryProduct(filteredProducts);
+
     }
   }, [products, category]);
+
+  useEffect(() => {
+    const sorted = handleSorting([...categoryProduct], sortValue);
+    setSortedProducts(sorted);
+  }, [categoryProduct, sortValue])
+
 
   function PaginatedItems({ itemsPerPage }) {
     const [itemOffset, setItemOffset] = useState(0);
     const endOffset = itemOffset + itemsPerPage;
-    const currentItems = categoryProduct?.slice(itemOffset, endOffset);
-    const pageCount = Math.ceil(categoryProduct?.length / itemsPerPage);
+    const currentItems = sortedProducts?.slice(itemOffset, endOffset);
+    const pageCount = Math.ceil(sortedProducts?.length / itemsPerPage);
     const handlePageClick = (event) => {
       const newOffset =
-        (event.selected * itemsPerPage) % categoryProduct?.length;
+        (event.selected * itemsPerPage) % sortedProducts?.length;
       setItemOffset(newOffset);
     };
 
@@ -95,8 +105,9 @@ export default function Categories() {
               <p className="text-[12px] md:text-sm pt-8">*Orders processed in up to 3 business days. Actual delivery times will vary.</p>
             </div>
 
-            <div className="container">
-              {categoryProduct.length ? (
+            <div className="container pt-12">
+              <Sorting sortValue={sortValue} setSortValue={setSortValue} />
+              {sortedProducts?.length ? (
 
                 <PaginatedItems itemsPerPage={8} />
 

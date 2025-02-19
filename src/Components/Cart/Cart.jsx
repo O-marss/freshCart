@@ -1,4 +1,4 @@
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Cart.module.css";
 import { FaArrowRight, FaHandshake } from "react-icons/fa";
 import { Link, useOutletContext } from "react-router-dom";
@@ -29,7 +29,7 @@ export default function Cart() {
   let [onlinePayment, setOnlinePayment] = useState(true)
   let [cashPayment, setCashPayment] = useState(false)
 
-  const {hideOverlay, showOverlay} = useOutletContext()
+  const { hideOverlay, showOverlay } = useOutletContext()
 
   const handleOnlinePayment = (event) => {
     setCashPayment(!event.target.checked)
@@ -41,9 +41,9 @@ export default function Cart() {
     setCashPayment(event.target.checked);
   };
 
-    useEffect(()=>{
-      (isFetching || isPending ? showOverlay() : hideOverlay())
-    },[isFetching, isPending])
+  useEffect(() => {
+    (isFetching || isPending ? showOverlay() : hideOverlay())
+  }, [isFetching, isPending])
 
   return (
     <>
@@ -143,7 +143,7 @@ export default function Cart() {
                               </button>
                               <div className="ms-3">
 
-                                {(isPending || isFetching) ? <PiSpinnerGapBold className="text-xl text-center fa-spin" />: isFetched ? <span
+                                {(isPending || isFetching) ? <PiSpinnerGapBold className="text-xl text-center fa-spin" /> : isFetched ? <span
                                   id="first_product"
                                   className="w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1"
                                 >

@@ -10,7 +10,6 @@ import { MdKeyboardArrowRight, MdOutlineFavoriteBorder } from "react-icons/md";
 import {
   IoIosHelpCircleOutline,
   IoMdArrowDropdown,
-  IoMdNotificationsOutline,
 } from "react-icons/io";
 import { FaUserCircle } from "react-icons/fa";
 import { RiLogoutBoxLine } from "react-icons/ri";
@@ -21,6 +20,7 @@ import SearchBar from "../SearchBar/SearchBar";
 import MobileSearchBar from "../MobileSearchBar/MobileSearchBar";
 
 export default function Navbar({ hideOverlay, showOverlay }) {
+
   const { userToken, setUserToken, userName, setUserName } = useContext(UserContext);
 
   const { data: categories } = useCategories(
@@ -28,8 +28,12 @@ export default function Navbar({ hideOverlay, showOverlay }) {
     "getAllCategories"
   );
 
-  const { data } = useCart('get');
-  const { data: wishListData } = useWishList('get')
+
+  const { cartResponse } = useCart();
+  const { wishListResponse } = useWishList();
+  const { data } = cartResponse;
+  const { data: wishListData } = wishListResponse;
+
   const navigate = useNavigate();
   const [navIsOpen, setNavIsOpen] = useState(false);
   const [categoryIsOpen, setCategoryIsOpen] = useState(false);
@@ -52,7 +56,6 @@ export default function Navbar({ hideOverlay, showOverlay }) {
       hideOverlay()
     }
   };
-
 
   const handleCategoryMenu = () => {
     if (categoryIsOpen === true) {
@@ -217,7 +220,9 @@ export default function Navbar({ hideOverlay, showOverlay }) {
                 className="hover:bg-[#ccebff] hover:rounded-full p-1 relative"
               >
                 <MdOutlineFavoriteBorder className="text-2xl" />
-                {wishListData?.count > 0 && userToken ? (
+
+
+                {userToken && wishListData?.count > 0 ? (
                   <span className="absolute -top-1 right-0 bg-main px-1 rounded-full text-white text-[12px]">
                     {wishListData?.count}
                   </span>
@@ -234,7 +239,7 @@ export default function Navbar({ hideOverlay, showOverlay }) {
                 className="hover:bg-[#ccebff] hover:rounded-full p-1 relative"
               >
                 <IoCartOutline className="text-2xl " />
-                {data?.numOfCartItems > 0 && userToken ? (
+                {userToken && data?.numOfCartItems > 0 ? (
                   <span className="absolute -top-1 right-0 bg-main px-1 rounded-full text-white text-[12px]">
                     {data?.numOfCartItems}
                   </span>

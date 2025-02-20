@@ -6,19 +6,22 @@ import { IoMdHeart } from 'react-icons/io'
 import useWishList from '../../Hooks/useWishList'
 import useCart from '../../Hooks/useCart'
 
-export default function ProductCard({ product, favoriteList }) {
+export default function ProductCard({ product }) {
+  const userToken = localStorage.getItem('userToken');
 
-  const { data } = useWishList('get')
-  const { mutate: addCart } = useCart('post');
-  const { mutate: deleteFromWishList } = useWishList('delete');
-  const { mutate: addToWishList } = useWishList('post');
+  const { wishListResponse, addToWishListResponse, deleteFromWishListResponse } = useWishList();
+  const { addResponse } = useCart();
+  const { mutate: addCart } = addResponse;
+  const { data } = wishListResponse;
+  const { mutate: deleteProductFromWishList } = deleteFromWishListResponse;
+  const { mutate: addToWishList } = addToWishListResponse;
 
   const handleAddtoWishList = (id) => {
     addToWishList({ productId: id })
   }
 
   const handleDeleteFromWishList = (id) => {
-    deleteFromWishList({ productId: id })
+    deleteProductFromWishList({ productId: id })
   }
 
   const handleAddCart = (id) => {
@@ -31,13 +34,16 @@ export default function ProductCard({ product, favoriteList }) {
         <div
           className={`${styles.product} pb-2 border border-zinc-200 rounded-2xl overflow-hidden h-[355px] md:h-[420px] lg:h-[460px]`}
         >
-          {data.data.length > 0 ? data?.data.map((item) => item.id == product?.id ? <button onClick={() => handleDeleteFromWishList(product?.id)}  ><IoMdHeart className={`${styles.delete_favorite_icon} text-2xl md:text-xl`} /></button> : (
-            <button onClick={() => handleAddtoWishList(product?.id)}>
-              <IoMdHeart className={`${styles.add_favorite_icon} text-2xl md:text-xl`} />
-            </button>
-          )
-
-          ) : (
+          {userToken && data?.data.length > 0 ? <button onClick={() =>
+            data?.data.some((item) => item.id === product?.id)
+              ? handleDeleteFromWishList(product?.id)
+              : handleAddtoWishList(product?.id)
+          }>
+            <IoMdHeart className={`${data?.data.some((item) => item.id === product?.id)
+              ? styles.delete_favorite_icon
+              : styles.add_favorite_icon} text-2xl md:text-xl`}
+            />
+          </button> : (
             <button onClick={() => handleAddtoWishList(product?.id)}>
               <IoMdHeart className={`${styles.add_favorite_icon} text-2xl md:text-xl`} />
             </button>
@@ -123,7 +129,7 @@ export default function ProductCard({ product, favoriteList }) {
             <IoCartOutline className="text-lg font-semibold" />
           </button>
         </div>
-      </div >
+      </div>
     </>
   )
 }

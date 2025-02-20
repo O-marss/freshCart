@@ -19,13 +19,17 @@ export default function ProductDetails() {
   const [quantity, setQuantity] = useState(0);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const { data: product, isLoading } = useProducts(`https://ecommerce.routemisr.com/api/v1/products/${id}`, `productDetails${id}`)
-  const { data: cart } = useCart('get')
-  const { mutate: addCart } = useCart('post');
-  const { mutate: updateCart, isPending } = useCart('put');
-  const { mutate: deleteCartItem, isPending: deletePending } = useCart('delete');
-  const { data: wishlist } = useWishList('get');
-  const { mutate: addToWishList } = useWishList('post');
-  const { mutate: deleteFromWishList } = useWishList('delete');
+
+  const { wishListResponse,addToWishListResponse,deleteFromWishListResponse } = useWishList();
+  const { cartResponse,addResponse,updateResponse,deleteResponse } = useCart();
+  
+  const { data: wishlist } = wishListResponse;
+  const { mutate: deleteProductFromWishList } = deleteFromWishListResponse;
+  const { mutate: addToWishList } = addToWishListResponse;
+  const { mutate: addCart } = addResponse;
+  const { data: cart } = cartResponse;
+  const { mutate: updateCart } = updateResponse;
+  const { mutate: deleteCartItem } = deleteResponse;
 
   const handleAddCart = (id) => {
     addCart({ productId: id });
@@ -44,7 +48,7 @@ export default function ProductDetails() {
   }
 
   const handleDeleteFromWishList = (id) => {
-    deleteFromWishList({ productId: id })
+    deleteProductFromWishList({ productId: id })
   }
 
   useEffect(() => {

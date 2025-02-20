@@ -10,15 +10,15 @@ import useSorting from '../../Hooks/useSorting';
 
 export default function Favorites() {
 
-  const { data, isLoading } = useWishList('get')
-  const [favoriteList, setFavoriteList] = useState(true)
+  const { wishListResponse } = useWishList()
+  const { data, isLoading } = wishListResponse;
   const { handleSorting } = useSorting();
   const [sortValue, setSortValue] = useState('default');
   const [sortedProducts, setSortedProducts] = useState([]);
 
   useEffect(() => {
     if (data) {
-      const sorted = handleSorting([...data.data], sortValue);
+      const sorted = handleSorting([...data?.data], sortValue);
       setSortedProducts(sorted);
     }
   }, [data, sortValue])
@@ -41,7 +41,6 @@ export default function Favorites() {
             <ProductCard
               key={product.id}
               product={product}
-              favoriteList={favoriteList}
             />
           )}
         </div>

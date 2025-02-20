@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Cart.module.css";
 import { FaArrowRight, FaHandshake } from "react-icons/fa";
 import { Link, useOutletContext } from "react-router-dom";
@@ -11,10 +11,14 @@ import useCart from "../../Hooks/useCart";
 
 export default function Cart() {
 
-  const { data, isFetching, isLoading } = useCart('get');
-  console.log(data)
-  const { mutate: updateCart, isPending } = useCart('put');
-  const { mutate: deleteCartItem, isPending: deletePending } = useCart('delete');
+  const {cartResponse} = useCart()
+  const {updateResponse} = useCart()
+  const {deleteResponse} = useCart()
+
+  const { data, isFetching, isLoading } = cartResponse;
+  const { mutate: updateCart, isPending } =updateResponse;
+  const { mutate: deleteCartItem, isPending: deletePending } = deleteResponse;
+
   let [onlinePayment, setOnlinePayment] = useState(true)
   let [cashPayment, setCashPayment] = useState(false)
 

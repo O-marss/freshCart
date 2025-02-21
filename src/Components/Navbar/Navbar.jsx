@@ -106,6 +106,7 @@ export default function Navbar({ hideOverlay, showOverlay }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+
   return (
     <>
       <header

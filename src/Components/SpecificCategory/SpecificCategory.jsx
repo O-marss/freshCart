@@ -84,7 +84,6 @@ export default function Categories() {
       </>
     );
   }
-
   return (
     <>
       {isLoading ? (
@@ -105,12 +104,10 @@ export default function Categories() {
               <p className="text-[12px] md:text-sm pt-8">*Orders processed in up to 3 business days. Actual delivery times will vary.</p>
             </div>
 
-            <div className="container pt-12">
+            <div className="container pt-12 lg:px-14">
               <Sorting sortValue={sortValue} setSortValue={setSortValue} />
               {sortedProducts?.length ? (
-
                 <PaginatedItems itemsPerPage={8} />
-
               ) : (
                 <div className="flex flex-col items-center pt-12">
                   <img src={logo} alt="" width={500} className="p-12" />

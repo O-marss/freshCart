@@ -18,11 +18,12 @@ export default function ProductDetails() {
   let { id } = useParams();
   const [quantity, setQuantity] = useState(0);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
+  const userToken = localStorage.getItem('userToken');
   const { data: product, isLoading } = useProducts(`https://ecommerce.routemisr.com/api/v1/products/${id}`, `productDetails${id}`)
 
-  const { wishListResponse,addToWishListResponse,deleteFromWishListResponse } = useWishList();
-  const { cartResponse,addResponse,updateResponse,deleteResponse } = useCart();
-  
+  const { wishListResponse, addToWishListResponse, deleteFromWishListResponse } = useWishList();
+  const { cartResponse, addResponse, updateResponse, deleteResponse } = useCart();
+
   const { data: wishlist } = wishListResponse;
   const { mutate: deleteProductFromWishList } = deleteFromWishListResponse;
   const { mutate: addToWishList } = addToWishListResponse;
@@ -122,15 +123,16 @@ export default function ProductDetails() {
                   Pr.ID: {product.id}
                 </span>
 
-                {wishlist?.data.length > 0 ? wishlist?.data.map((item) => (item.id == product?.id) ?
-                  <button key={item.id} onClick={() => handleDeleteFromWishList(product?.id)}>
-                    <IoMdHeart className={`${styles.delete_favorite_icon} text-2xl md:text-xl`} />
-                  </button> : (
-                    <button key={item.id} onClick={() => handleAddtoWishList(product?.id)}>
-                      <IoMdHeart className={`${styles.add_favorite_icon} text-2xl md:text-xl`} />
-                    </button>
-                  )
-                ) : (
+                {userToken && wishlist?.data.length > 0 ? <button onClick={() =>
+                  wishlist?.data.some((item) => item.id === product?.id)
+                    ? handleDeleteFromWishList(product?.id)
+                    : handleAddtoWishList(product?.id)
+                }>
+                  <IoMdHeart className={`${wishlist?.data.some((item) => item.id === product?.id)
+                    ? styles.delete_favorite_icon
+                    : styles.add_favorite_icon} text-2xl md:text-xl`}
+                  />
+                </button> : (
                   <button onClick={() => handleAddtoWishList(product?.id)}>
                     <IoMdHeart className={`${styles.add_favorite_icon} text-2xl md:text-xl`} />
                   </button>

@@ -11,21 +11,23 @@ import useCart from "../../Hooks/useCart";
 
 export default function Cart() {
 
-  const {cartResponse} = useCart()
-  const {updateResponse} = useCart()
-  const {deleteResponse} = useCart()
+  const { cartResponse } = useCart()
+  const { updateResponse } = useCart()
+  const { deleteResponse } = useCart()
 
   const { data, isFetching, isLoading } = cartResponse;
-  const { mutate: updateCart, isPending } =updateResponse;
+  const { mutate: updateCart, isPending } = updateResponse;
   const { mutate: deleteCartItem, isPending: deletePending } = deleteResponse;
-
-  let [onlinePayment, setOnlinePayment] = useState(true)
-  let [cashPayment, setCashPayment] = useState(false)
 
   const { hideOverlay, showOverlay } = useOutletContext()
 
   const [productCounts, setProductCounts] = useState({});
 
+  const [paymentMethod, setPaymentMethod] = useState("onlinePayChoice");
+
+  const handlePaymentChange = (e) => {
+    setPaymentMethod(e.target.value);
+  };
 
   const handleUpdateCart = (id, updateCount) => {
     updateCart({ productId: id, count: updateCount });
@@ -34,19 +36,8 @@ export default function Cart() {
       [id]: updateCount,
     }));
   };
-
   const handleDeleteCart = (id) => {
     deleteCartItem({ productId: id });
-  };
-
-  const handleOnlinePayment = (event) => {
-    setCashPayment(!event.target.checked)
-    setOnlinePayment(event.target.checked);
-  };
-
-  const handleCashPayment = (event) => {
-    setOnlinePayment(!event.target.checked);
-    setCashPayment(event.target.checked);
   };
 
   useEffect(() => {
@@ -69,7 +60,7 @@ export default function Cart() {
               or isn't as described
             </span>
           </p>
-          {(data?.data) ? (
+          {(data?.data.products.length > 0) ? (
             <>
               <div className="flex flex-col md:flex-row md:justify-between mt-5">
 
@@ -230,7 +221,7 @@ export default function Cart() {
                   <div className="flex flex-col gap-4">
                     <div>
                       <h4 className="font-semibold mb-3">How you'll pay</h4>
-                      <div className="flex flex-col gap-3">
+                      <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3">
                         <label className={`${styles.label}`}>
                           <input
                             type="radio"
@@ -238,8 +229,8 @@ export default function Cart() {
                             name="paymentMethod"
                             value="onlinePayChoice"
                             className={`${styles.radio_input}`}
-                            checked={onlinePayment}
-                            onChange={handleOnlinePayment}
+                            checked={paymentMethod === "onlinePayChoice"}
+                            onChange={handlePaymentChange}
                           />
                           <div className={`${styles.radio_design}`}></div>
 
@@ -259,8 +250,8 @@ export default function Cart() {
                             name="paymentMethod"
                             value="cashPayChoice"
                             className={`${styles.radio_input}`}
-                            checked={cashPayment}
-                            onChange={handleCashPayment}
+                            checked={paymentMethod === "cashPayChoice"}
+                            onChange={handlePaymentChange}
                           />
                           <div className={`${styles.radio_design}`}></div>
 
@@ -271,7 +262,7 @@ export default function Cart() {
                             </span>
                           </div>
                         </label>
-                      </div>
+                      </form>
                     </div>
                     <div>
                       <div className="flex flex-col gap-5 border-b border-gray-200 pb-3">
@@ -298,26 +289,19 @@ export default function Cart() {
                       </div>
                     </div>
                     <div>
-
-                      {onlinePayment ? <Link
-                        to={"/checkout"}
-                        className={`w-full mx-auto my-5 flex justify-center px-5 py-3 bg-[#222] text-white hover:bg-opacity-75 hover:scale-[1.03] transition-all focus:ring-none focus:outline-none focus:ring-man font-medium rounded-full`}
+                      <Link to={paymentMethod == 'onlinePayChoice' ? "/checkout" : "/cashpayment"} className={`w-full mx-auto my-5 flex justify-center px-5 py-3 bg-[#222] text-white hover:bg-opacity-75 hover:scale-[1.03] transition-all focus:ring-none focus:outline-none focus:ring-man font-medium rounded-full`}
                       >
-                        Proceed to Checkout
-                      </Link> : <Link
-                        to={"/cashpayment"}
-                        className={`w-full mx-auto my-5 flex justify-center px-5 py-3 bg-[#222] text-white hover:bg-opacity-75 hover:scale-[1.03] transition-all focus:ring-none focus:outline-none focus:ring-man font-medium rounded-full`}
-                      >
-                        Cash Payment
-                      </Link>}
-
+                        {paymentMethod == 'onlinePayChoice' ? "Proceed to Checkout" : "Cash Payment"}
+                      </Link>
                     </div>
                   </div>
                 </div>
               </div>
             </>
           ) : (
-            <div>Not Found any product</div>
+            <div className="flex justify-center items-center p-5">
+              <h3 className="text-3xl">Your cart is empty.</h3>
+            </div>
           )}
         </section>
       }

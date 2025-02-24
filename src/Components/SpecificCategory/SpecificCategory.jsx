@@ -14,12 +14,12 @@ import Sorting from "../Sorting/Sorting.jsx";
 export default function Categories() {
   const { id } = useParams();
 
-  const { data: category } = useCategories(
+  const { data: category, isLoading } = useCategories(
     `https://ecommerce.routemisr.com/api/v1/categories/${id}`,
     `getSpecificCategories${id}`
   );
 
-  const { data: products, isLoading } = useProducts(
+  const { data: products } = useProducts(
     `https://ecommerce.routemisr.com/api/v1/products`,
     `allProducts`
   );

@@ -81,11 +81,11 @@ export default function DiscountedProducts() {
                         className={`${styles.product} lg:space-y-0 pb-2 border border-zinc-200 rounded-2xl overflow-hidden`}
                       >
                         {userToken && wishlist?.data.length > 0 ? <button onClick={() =>
-                          wishlist?.data.some((item) => item.id === product?.id)
+                          wishlist?.data?.some((item) => item.id === product?.id)
                             ? handleDeleteFromWishList(product?.id)
                             : handleAddtoWishList(product?.id)
                         }>
-                          <IoMdHeart className={`${wishlist?.data.some((item) => item.id === product?.id)
+                          <IoMdHeart className={`${wishlist?.data?.some((item) => item.id === product?.id)
                             ? styles.delete_favorite_icon
                             : styles.add_favorite_icon} text-2xl md:text-xl`}
                           />

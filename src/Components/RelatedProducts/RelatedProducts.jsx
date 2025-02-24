@@ -24,6 +24,11 @@ export default function RelatedProducts({ categoryName }) {
   const handleAddtoWishList = (id) => {
     addToWishList({ productId: id })
   }
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return <>
     <section className='pt-20 p-8 lg:px-14 container'>
       <h2 className='md:text-3xl font-serif ms-4 font-normal'>You may also like</h2>
@@ -59,7 +64,7 @@ export default function RelatedProducts({ categoryName }) {
                     <button onClick={() => handleAddtoWishList(product?.id)}>
                       <IoMdHeart className={`${styles.card_favorite_icon} text-2xl md:text-xl`} />
                     </button>
-                    <Link to={`/productdetails/${product?.id}`}>
+                    <Link to={`/productdetails/${product?.id}`} onClick={scrollToTop}>
                       <div className="relative ">
                         <img
                           src={product?.imageCover}
@@ -140,7 +145,7 @@ export default function RelatedProducts({ categoryName }) {
                       <IoCartOutline className="text-lg font-semibold" />
                     </button>
                   </div>
-                </div >
+                </div>
               </SwiperSlide>))
           }
         </Swiper>

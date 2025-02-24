@@ -2,11 +2,13 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { queryClient } from "../App";
+import { useNavigate } from "react-router-dom";
 
 export default function useCart() {
 
     const userToken = localStorage.getItem("userToken");
     const headers = { token: localStorage.getItem("userToken") };
+    const navigate = useNavigate()
 
     // ^## Get Cart Function ###
     function getProductsCart() {
@@ -36,28 +38,21 @@ export default function useCart() {
 
     const updateResponse = useMutation({
         mutationFn: updateCartProductCount,
-        onMutate: async ({ productId }) => {
-            await queryClient.cancelQueries(['cart'])
+        onMutate: ({ productId, count }) => {
             const previousCart = queryClient.getQueryData(['cart'])
-            queryClient.setQueryData(['cart'], (oldCart) => {
-                if (!oldCart?.data?.products) return oldCart;
-                return {
-                    ...oldCart,
-                    data: {
-                        ...oldCart.data,
-                        products: oldCart.data.products.map((item) =>
-                            item._id === productId ? { ...item, count } : item
-                        ),
-                    },
-                };
-            })
+            const updatedProducts = previousCart.data.data.products.map((item) =>
+                item.product.id === productId
+                    ? { ...item, count }
+                    : item
+            );
+            queryClient.setQueryData(['cart'], { ...previousCart, data: { ...previousCart.data, data: { ...previousCart.data.data, products: [...updatedProducts] }, numOfCartItems: updatedProducts.length } })
 
             return { previousCart }
         },
         onSettled: () => {
             queryClient.invalidateQueries(['cart'])
         },
-        onError: (err, newTodo, context) => {
+        onError: (context) => {
             queryClient.setQueryData(['cart'], context.previousCart)
             toast.error('Failed to update product count');
         },
@@ -76,30 +71,23 @@ export default function useCart() {
     }
     const addResponse = useMutation({
         mutationFn: addProductToCart,
-        onMutate: async ({ productId }) => {
-            await queryClient.cancelQueries(['cart'])
+        onMutate: ({ productId }) => {
             const previousCart = queryClient.getQueryData(['cart'])
-            queryClient.setQueryData(['cart'], (oldCart) => {
-                if (!oldCart) return oldCart;
-                return {
-                    ...oldCart,
-                    data: {
-                        ...oldCart?.data,
-                        products: oldCart?.data?.products?.map(
-                            (item) => item._id == productId ? { ...item } : item
-                        ),
-                    },
-                };
-            })
+
+            let newProducts = [...previousCart.data.data.products, { id: productId }];
+            queryClient.setQueryData(['cart'], { ...previousCart, data: { ...previousCart.data, data: { ...previousCart.data.data, products: [...newProducts] }, numOfCartItems: newProducts.length } })
+            toast.success('Product added to cart successfully');
+
             return { previousCart }
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['cart']);
-            toast.success('Product added successfully')
         },
         onError: (context) => {
             queryClient.setQueryData(['cart'], context.previousCart)
-            toast.error('Failed.. Please make sure that you are logged in.');
+            if (!userToken) {
+                navigate('/signin')
+            }
         },
     })
 
@@ -114,29 +102,15 @@ export default function useCart() {
 
     const deleteResponse = useMutation({
         mutationFn: deleteCartProduct,
-        onMutate: async ({ productId }) => {
-            await queryClient.cancelQueries(['cart'])
+        onMutate: ({ productId }) => {
             const previousCart = queryClient.getQueryData(['cart'])
-            queryClient.setQueryData(['cart'], (oldCart) => {
-                if (!oldCart) return oldCart;
-                return {
-                    ...oldCart,
-                    data: {
-                        ...oldCart?.data,
-                        products: oldCart?.data?.products?.filter(
-                            (item) => item._id !== productId
-                        ),
-                    },
-                };
-            })
-            return { previousCart }
+            const newData = previousCart?.data?.data?.products?.filter((item) => item.product.id !== productId)
+            queryClient.setQueryData(['cart'], { ...previousCart, data: { ...previousCart.data, data: { ...previousCart.data.data, products: [...newData] }, numOfCartItems: newData.length } })
+            return { previousCart };
         },
-        onSuccess: () => {
+        onError: (error, context) => {
+            console.log(error);
             queryClient.invalidateQueries(['cart']);
-        },
-        onError: (context) => {
-            queryClient.setQueryData(['cart'], context.previousCart)
-            toast.error('Failed to update product count');
         },
     })
 

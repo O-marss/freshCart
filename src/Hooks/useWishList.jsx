@@ -4,11 +4,14 @@ import React from 'react'
 import { queryClient } from '../App'
 import toast from 'react-hot-toast'
 import Overlay from '../Components/Overlay/Overlay'
+import { useNavigate } from 'react-router-dom'
 
 export default function useWishList() {
 
     const userToken = localStorage.getItem('userToken')
     const headers = { token: localStorage.getItem('userToken') }
+
+    const navigate = useNavigate()
 
     function getuserWishList() {
         return axios.get(`https://ecommerce.routemisr.com/api/v1/wishlist`, { headers })
@@ -35,13 +38,21 @@ export default function useWishList() {
 
     const addToWishListResponse = useMutation({
         mutationFn: addProductToWishList,
-        onSuccess: () => {
-            queryClient.invalidateQueries(['getUserWishList']);
-            toast.success('Product added successfully');
+        onMutate: ({ productId }) => {
+            const previousWishlist = queryClient.getQueryData(['getUserWishList']);
+            let newProducts = [...previousWishlist?.data?.data, { id: productId }];
+            queryClient.setQueryData(['getUserWishList'], { ...previousWishlist, data: { ...previousWishlist.data, data: [...newProducts], count: newProducts.length } })
+            toast.success('Product added to Wishlist successfully');
+            return { previousWishlist }
         },
-        onError: (error) => {
-            console.log(error);
-            toast.error('Failed.. Please make sure that you are logged in.');
+        onSettled: () => {
+            queryClient.invalidateQueries(['getUserWishList']);
+        },
+        onError: (context) => {
+            queryClient.setQueryData(['getUserWishList'], context.previousData)
+            if (!userToken) {
+                navigate('/signin')
+            }
         },
     })
 
@@ -51,13 +62,22 @@ export default function useWishList() {
 
     const deleteFromWishListResponse = useMutation({
         mutationFn: deleteProductFromWishList,
-        onSuccess: () => {
-            queryClient.invalidateQueries(['cart']);
+        onMutate: ({ productId }) => {
+            const previousWishlist = queryClient.getQueryData(['getUserWishList']) || { data: { data: [] } };
+            console.log(previousWishlist)
+            let newProducts = previousWishlist?.data?.data?.filter((product) => product.id !== productId);
+            queryClient.setQueryData(['getUserWishList'], { ...previousWishlist, data: { ...previousWishlist.data, data: [...newProducts], count: newProducts.length } })
             toast.success('Product deleted successfully');
+            return { previousWishlist }
         },
-        onError: (error) => {
+        onSettled: () => {
+            queryClient.invalidateQueries(['getUserWishList']);
+        },
+        onError: (error, context) => {
             console.error(error);
-            toast.error('Failed to delete product ');
+            if (context?.previousWishlist) {
+                queryClient.setQueryData(['getUserWishList'], context.previousWishlist);
+            }
         },
     })
 

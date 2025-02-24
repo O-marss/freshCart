@@ -28,7 +28,6 @@ export default function Navbar({ hideOverlay, showOverlay }) {
     "getAllCategories"
   );
 
-
   const { cartResponse } = useCart();
   const { wishListResponse } = useWishList();
   const { data } = cartResponse;
@@ -38,7 +37,7 @@ export default function Navbar({ hideOverlay, showOverlay }) {
   const [navIsOpen, setNavIsOpen] = useState(false);
   const [categoryIsOpen, setCategoryIsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
+  const [isFocused] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const menuRef = useRef(null);
   const userMenuRef = useRef(null)

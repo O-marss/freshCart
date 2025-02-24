@@ -15,8 +15,10 @@ import RelatedProducts from "../RelatedProducts/RelatedProducts";
 import useWishList from "../../Hooks/useWishList";
 
 export default function ProductDetails() {
-  let { id } = useParams();
-  const [quantity, setQuantity] = useState(0);
+  const { id } = useParams();
+
+  const [productCounts, setProductCounts] = useState({});
+
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const userToken = localStorage.getItem('userToken');
   const { data: product, isLoading } = useProducts(`https://ecommerce.routemisr.com/api/v1/products/${id}`, `productDetails${id}`)
@@ -28,7 +30,9 @@ export default function ProductDetails() {
   const { mutate: deleteProductFromWishList } = deleteFromWishListResponse;
   const { mutate: addToWishList } = addToWishListResponse;
   const { mutate: addCart } = addResponse;
+
   const { data: cart } = cartResponse;
+  console.log(cart)
   const { mutate: updateCart } = updateResponse;
   const { mutate: deleteCartItem } = deleteResponse;
 
@@ -36,8 +40,12 @@ export default function ProductDetails() {
     addCart({ productId: id });
   };
 
-  const handleUpdateCart = (id, newCount) => {
-    updateCart({ productId: id, count: newCount });
+  const handleUpdateCart = (id, updateCount) => {
+    updateCart({ productId: id, count: updateCount });
+    setProductCounts((prevCounts) => ({
+      ...prevCounts,
+      [id]: updateCount,
+    }));
   };
 
   const handleDeleteCart = (id) => {
@@ -53,9 +61,12 @@ export default function ProductDetails() {
   }
 
   useEffect(() => {
-    cart?.data?.products.map((product) => product.product?.id == product?.id ? setQuantity(product.count) : setQuantity(0))
-  }, [cart, wishlist])
-
+    const specificProduct = cart?.data?.products.find((item) => item.product.id == product?.id);
+    setProductCounts((prevCounts) => ({
+      ...prevCounts,
+      [product?.id]: specificProduct ? specificProduct.count : 0,
+    }));
+  }, [cart, product])
 
   return (
     <>
@@ -205,9 +216,8 @@ export default function ProductDetails() {
                   <span
                     className="border border-gray-300  text-center focus:ring-blue-500 focus:border-blue-500 block py-2.5 w-full text-lg  "
                   >
-                    {quantity}
+                    {productCounts[product.id] || 0}
                   </span>
-
 
                   <div>
                     <button
@@ -215,8 +225,8 @@ export default function ProductDetails() {
                       id="increment-button"
                       className="  hover:bg-gray-200 p-2 ms-1 focus:ring-gray-100  focus:ring-none focus:outline-none "
                       onClick={() => {
-                        handleUpdateCart(product.id,
-                          quantity + 1)
+                        handleUpdateCart(product?.id,
+                          (productCounts[product.id] || 0) + 1)
                       }}
                     >
                       <IoIosArrowUp />
@@ -226,16 +236,16 @@ export default function ProductDetails() {
                       id="decrement-button"
                       className=" hover:bg-gray-200 p-2 ms-1 focus:ring-gray-100  focus:ring-none focus:outline-none "
                       onClick={() => {
-                        handleUpdateCart(product.id,
-                          quantity - 1)
+                        handleUpdateCart(product?.id,
+                          (productCounts[product.id] || 0) - 1)
                       }}
-                      disabled={quantity <= 1}
+                      disabled={productCounts[product.id] <= 1}
                     >
                       <IoIosArrowDown />
                     </button>
                   </div>
                 </div>
-                {quantity < 1 ? <button className="bg-main text-white px-5 py-4  lg:px-5 lg:py-3  lg:text-lg font-medium flex-1  lg:ms-6 hover:bg-[#517e51]" onClick={() => { handleAddCart(product.id) }}>
+                {productCounts[product.id] < 1 ? <button className="bg-main text-white px-5 py-4  lg:px-5 lg:py-3  lg:text-lg font-medium flex-1  lg:ms-6 hover:bg-[#517e51]" onClick={() => { handleAddCart(product.id) }}>
                   Add to Cart
                 </button> : <button className="bg-main text-white px-5 py-4  lg:px-5 lg:py-3  lg:text-lg font-medium flex-1  lg:ms-6 hover:bg-[#517e51]" onClick={() => { handleDeleteCart(product.id) }}>
                   Remove from Cart

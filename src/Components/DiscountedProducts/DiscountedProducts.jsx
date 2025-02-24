@@ -21,15 +21,21 @@ export default function DiscountedProducts() {
   );
 
   const { wishListResponse, addToWishListResponse, deleteFromWishListResponse } = useWishList()
-  const { addResponse } = useCart();
+  const { cartResponse, addResponse, deleteResponse } = useCart();
 
   const { data: wishlist } = wishListResponse;
   const { mutate: addCart } = addResponse;
+  const { mutate: deleteCart } = deleteResponse;
+  const { data: cartData } = cartResponse;
   const { mutate: deleteFromWishList } = deleteFromWishListResponse;
   const { mutate: addToWishList } = addToWishListResponse;
 
   const handleAddCart = (id) => {
     addCart({ productId: id });
+  };
+
+  const handleDeleteCart = (id) => {
+    deleteCart({ productId: id });
   };
 
   const handleAddtoWishList = (id) => {
@@ -168,9 +174,11 @@ export default function DiscountedProducts() {
                         </Link>
                         <button
                           className={`${styles.card_add} flex gap-2 justify-center items-center text-sm text-white font-semibold bg-[#222] px-5 py-2 mx-auto hover:bg-opacity-75 z-[9999999999999999999]`}
-                          onClick={() => handleAddCart(product.id)}
+
+                          onClick=
+                          {cartData?.data?.products?.some((item) => item.product?.id === product?.id) ? () => handleDeleteCart(product?.id) : () => handleAddCart(product?.id)}
                         >
-                          <span>Quick Add</span>
+                          {cartData?.data?.products?.some((item) => item.product?.id === product?.id) ? <span>Remove from</span> : <span>Quick Add</span>}
                           <IoCartOutline className="text-lg font-semibold" />
                         </button>
                       </div>

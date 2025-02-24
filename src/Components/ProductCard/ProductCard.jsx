@@ -10,8 +10,10 @@ export default function ProductCard({ product }) {
   const userToken = localStorage.getItem('userToken');
 
   const { wishListResponse, addToWishListResponse, deleteFromWishListResponse } = useWishList();
-  const { addResponse } = useCart();
+  const { cartResponse, addResponse, deleteResponse } = useCart();
+  const { data: cartData } = cartResponse;
   const { mutate: addCart } = addResponse;
+  const { mutate: deleteCart } = deleteResponse;
   const { data } = wishListResponse;
   const { mutate: deleteProductFromWishList } = deleteFromWishListResponse;
   const { mutate: addToWishList } = addToWishListResponse;
@@ -26,6 +28,10 @@ export default function ProductCard({ product }) {
 
   const handleAddCart = (id) => {
     addCart({ productId: id });
+  };
+
+  const handleDeleteCart = (id) => {
+    deleteCart({ productId: id });
   };
 
   return (
@@ -123,9 +129,10 @@ export default function ProductCard({ product }) {
           </Link>
           <button
             className={`${styles.card_add} flex gap-2 justify-center items-center text-sm text-white font-semibold bg-[#222] px-5 py-2 mx-auto hover:bg-opacity-75 z-[999]`}
-            onClick={() => handleAddCart(product.id)}
+            onClick=
+            {cartData?.data?.products?.some((item) => item.product?.id === product?.id) ? () => handleDeleteCart(product?.id) : () => handleAddCart(product?.id)}
           >
-            <span>Quick Add</span>
+            {cartData?.data?.products?.some((item) => item.product?.id === product?.id) ? <span>Remove from</span> : <span>Quick Add</span>}
             <IoCartOutline className="text-lg font-semibold" />
           </button>
         </div>

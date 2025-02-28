@@ -362,6 +362,8 @@ export default function Navbar({ hideOverlay, showOverlay }) {
                     <Link
                       to={`/specificcategory/${category._id}`}
                       className="w-full flex justify-between items-center px-3 py-3 text-sm hover:bg-black hover:bg-opacity-5"
+                      onClick={() => handleNavMenu()}
+
                     >
                       <span>{category.name}</span>
                       <MdKeyboardArrowRight className="text-xl" />
